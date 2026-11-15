@@ -1,0 +1,16 @@
+.venv/
+.mpt-runtime/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+config.json
+*.local.json
+.vcfr-instance.lock
+backups/
+models/
+.cache/
+*.log
+*.wav
+*.mp3
+*.sqlite

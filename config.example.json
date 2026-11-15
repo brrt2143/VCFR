@@ -1,0 +1,21 @@
+{
+  "note_path": "demo-vault/03-Notas/Don Quijote - Notas de lectura.md",
+  "book_path": "examples/book.json",
+  "chapter_title": "Demo: observar antes de concluir",
+  "model": "liquid/lfm2.5-1.2b",
+  "assistant_provider": "lmstudio",
+  "ollama_url": "http://127.0.0.1:11434",
+  "speech_language": "es",
+  "wake_phrase": "VCFR",
+  "speech_models": {
+    "es": "models/vosk-model-small-es-0.42",
+    "en": "models/vosk-model-small-en-us-0.15",
+    "fr": "models/vosk-model-small-fr-0.22",
+    "pt": "models/vosk-model-small-pt-0.3"
+  },
+  "vosk_model_path": "models/vosk-model-small-es-0.42",
+  "lmstudio_url": "http://127.0.0.1:1234",
+  "lms_path": "~/.lmstudio/bin/lms",
+  "mpris_service": "org.mpris.MediaPlayer2.readest",
+  "keyboard_fallback": true
+}
