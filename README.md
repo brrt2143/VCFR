@@ -2,7 +2,11 @@
 
 ![Identidad visual de VCFR](assets/vcfr-logo.svg)
 
-🎬 **[Reproducir el video demo](demo/VCFR-Demo.mp4)** · [Descargar el MP4](https://raw.githubusercontent.com/brrt2143/VCFR/main/demo/VCFR-Demo.mp4)
+## Demostración en video
+
+https://github.com/user-attachments/assets/5c8b4d10-2e13-4b9c-b366-e373534ce416
+
+[Descargar el MP4](https://raw.githubusercontent.com/brrt2143/VCFR/main/demo/VCFR-Demo.mp4)
 
 Asistente local de lectura por voz y captura de notas para lectores de libros electrónicos. VCFR controla lectores que anuncian sus controles mediante MPRIS (pausa, reanuda, frase anterior/siguiente y velocidad cuando el reproductor lo admite), reconoce órdenes con Vosk y usa un servidor compatible con la API de OpenAI en LM Studio para explicar el texto seleccionado. Las notas son Markdown, por lo que funcionan en Obsidian y otros editores.
 
