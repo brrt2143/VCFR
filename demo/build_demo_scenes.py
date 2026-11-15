@@ -141,7 +141,7 @@ def build():
     logo(d, 165, 300, 1.0)
     text(d, (500, 250), "VCFR", H1)
     text(d, (510, 370), "MIT  ·  OPEN SOURCE", MED, MINT)
-    text(d, (510, 480), "Lee. Habla. Guarda.\nY sigue donde ibas.", H2)
+    text(d, (510, 480), "Lee. Habla. Guarda\na tu manera.", H2)
     text(d, (170, 850), "Readest · Calibre · LM Studio · Ollama · Obsidian", SMALL, MUTED)
     frames.append(image)
 
