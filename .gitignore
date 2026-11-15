@@ -10,6 +10,7 @@ config.json
 backups/
 models/
 .cache/
+demo/.models/
 *.log
 *.wav
 *.mp3

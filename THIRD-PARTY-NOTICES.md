@@ -10,7 +10,11 @@ VCFR puede usar Vosk para reconocimiento local de voz. Vosk se distribuye bajo A
 
 ## eSpeak NG
 
-La voz local opcional utiliza el programa instalado `espeak-ng`; VCFR no incluye ni redistribuye el binario. El audio de la demo se generó con él en el equipo. [Código y licencia](https://github.com/espeak-ng/espeak-ng).
+La voz local opcional de VCFR utiliza el programa instalado `espeak-ng`; VCFR no incluye ni redistribuye el binario. [Código y licencia](https://github.com/espeak-ng/espeak-ng).
+
+## Piper y modelo de voz (video de demostración)
+
+La narración del video se sintetizó localmente con [Piper](https://github.com/OHF-Voice/piper1-gpl), cuyo motor está bajo GPL-3.0 y no se incluye en VCFR. Se usó el modelo [es_MX-claude-high](https://huggingface.co/rhasspy/piper-voices/tree/main/es/es_MX/claude/high); su ficha indica español de México, calidad alta y datos de voz bajo Apache-2.0. El modelo ONNX no está incluido en el repositorio; el archivo de audio generado sí forma parte del video de demostración.
 
 ## Dependencias y herramientas de desarrollo
 

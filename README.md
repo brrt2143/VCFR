@@ -114,7 +114,7 @@ El ZIP está construido con `python build_calibre_plugin.py`. Se recomienda prob
 
 El reconocimiento de voz, la extracción de EPUB y las notas se procesan localmente. El texto del libro solo se envía al servidor de LM Studio u Ollama que selecciones, en localhost, cuando pides una explicación, resumen o función similar. VCFR no evita DRM ni modifica el archivo del libro. Las acciones automatizadas son una lista cerrada; las respuestas del modelo no ejecutan comandos. Revisa la licencia local del modelo y las condiciones del lector.
 
-El video de demostración (`demo/VCFR-Demo.mp4`) usa escenas gráficas originales, una narración sintética local en español y el modo local de MoneyPrinterTurbo. No contiene grabaciones de usuarios ni llamadas a servicios de generación remotos. El texto de la narración y el generador de escenas se incluyen en `demo/`.
+El video de demostración (`demo/VCFR-Demo.mp4`) usa escenas gráficas originales y una narración neural local en español mexicano generada con Piper. No contiene grabaciones de usuarios ni llamadas a servicios de generación remotos. El texto de la narración, el generador de escenas y el script de reconstrucción se incluyen en `demo/`.
 
 ## Créditos y proyectos relacionados
 
@@ -123,7 +123,7 @@ El video de demostración (`demo/VCFR-Demo.mp4`) usa escenas gráficas originale
 - [Vosk API](https://github.com/alphacep/vosk-api) permite el reconocimiento de voz local. Vosk API usa Apache-2.0; cada modelo acústico conserva su propia licencia. Consulta [los modelos y licencias](https://alphacephei.com/vosk/models).
 - [Requests](https://github.com/psf/requests) es la biblioteca HTTP utilizada por VCFR, bajo Apache-2.0.
 - [Pillow](https://github.com/python-pillow/Pillow) se utiliza en el guion que genera las escenas ilustradas de la demo; Pillow usa la licencia HPND.
-- [eSpeak NG](https://github.com/espeak-ng/espeak-ng) generó la voz sintética local del video de demostración; usa GPL-3.0. El audio generado se incluye como parte de la demo audiovisual, no como código de VCFR.
+- [Piper](https://github.com/OHF-Voice/piper1-gpl) generó localmente la narración neural del video de demostración; el motor usa GPL-3.0. El modelo de voz `es_MX-claude-high` no se redistribuye por separado; su ficha indica que el conjunto de datos usa Apache-2.0. El audio generado se incluye como parte de la demo audiovisual, no como código de VCFR.
 - [Readest](https://github.com/readest/readest) y su soporte TTS son el lector de referencia. VCFR se comunica con los controles públicos del escritorio/MPRIS; no contiene código de Readest.
 - El conector de [Calibre](https://github.com/kovidgoyal/calibre) utiliza sus APIs documentadas; no copia código del proyecto.
 - [LM Studio](https://github.com/lmstudio-ai) y [Ollama](https://github.com/ollama/ollama) son servidores locales opcionales compatibles con el formato de API utilizado; VCFR no incluye ni redistribuye sus binarios o modelos.
