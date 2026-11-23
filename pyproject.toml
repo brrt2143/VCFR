@@ -11,6 +11,10 @@ requires-python = ">=3.10"
 license = {file = "LICENSE"}
 dependencies = ["requests>=2.31,<3", "vosk==0.3.45"]
 
+[project.optional-dependencies]
+video = ["faster-whisper>=1.0,<2"]
+video-online = ["faster-whisper>=1.0,<2", "yt-dlp>=2024.1.0"]
+
 [project.scripts]
 vcfr = "vcfr.app:main"
 

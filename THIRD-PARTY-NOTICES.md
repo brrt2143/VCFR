@@ -25,4 +25,6 @@ La narración del video se sintetizó localmente con [Piper](https://github.com/
 - [FFmpeg](https://github.com/FFmpeg/FFmpeg): se usó para codificar y unir el video. Los términos dependen de las opciones de compilación de FFmpeg instalada; VCFR no redistribuye el ejecutable.
 - [Calibre](https://github.com/kovidgoyal/calibre), [Readest](https://github.com/readest/readest), [LM Studio](https://github.com/lmstudio-ai) y [Ollama](https://github.com/ollama/ollama) son aplicaciones o integraciones opcionales; VCFR no incluye sus binarios.
 
-Las herramientas de transcripción enlazadas en el roadmap, [whisper.cpp](https://github.com/ggml-org/whisper.cpp) y [faster-whisper](https://github.com/SYSTRAN/faster-whisper), no forman parte de esta versión y no se redistribuye código suyo.
+## Transcripción opcional
+
+VCFR utiliza [faster-whisper](https://github.com/SYSTRAN/faster-whisper) para procesar el audio en el equipo y [yt-dlp](https://github.com/yt-dlp/yt-dlp) para obtener el audio de enlaces compatibles. Ambos se instalan por separado mediante los extras de Python.

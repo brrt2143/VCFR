@@ -30,7 +30,7 @@ Además de facilitar la lectura, VCFR puede servir como herramienta de **gestió
 ## Roadmap
 
 - **Tarjetas de aprendizaje:** crear tarjetas de pregunta y respuesta desde fragmentos seleccionados, conservar la referencia al libro y exportar a formatos sencillos como CSV/Anki. La persona debe revisar cada tarjeta antes de guardarla.
-- **Transcripción de videos y audio:** importar un archivo local, mostrar texto con marcas de tiempo, elegir fragmentos y guardarlos como notas con enlace al momento del video. Evaluar motores locales como [whisper.cpp](https://github.com/ggml-org/whisper.cpp) o [faster-whisper](https://github.com/SYSTRAN/faster-whisper); serían opciones técnicas a investigar, no dependencias actuales.
+- **Transcripción de conferencias:** ya se pueden transcribir archivos locales y enlaces públicos, elegir fragmentos con marcas de tiempo y guardarlos por voz. El siguiente paso es mejorar la navegación por capítulos y preparar tarjetas de lecciones a partir de charlas.
 - **Accesibilidad de interfaz:** mejorar navegación por teclado, etiquetas accesibles, contraste y compatibilidad con lectores de pantalla.
 - **Más lectores y exportadores:** añadir conectores solo cuando exista una interfaz fiable y documentada, manteniendo Markdown como formato de salida portable.
 
@@ -50,6 +50,7 @@ La documentación de Readest publica TTS y un complemento de Calibre para admini
 - Linux con escritorio gráfico, Python 3.10 o posterior, `python3-tk`, `xdotool`, `busctl`, `wpctl`, `pw-record` y `espeak-ng`.
 - PipeWire/PulseAudio con una fuente de audio disponible.
 - LM Studio u Ollama opcionales para preguntas; el control, guardado y comandos cerrados funcionan sin ningún modelo. Configura el servidor local ligado a `127.0.0.1`.
+- Para transcribir: instala el extra local `.[video]`; para URLs públicas instala `.[video-online]`. Se usa [faster-whisper](https://github.com/SYSTRAN/faster-whisper) en CPU/int8; la primera ejecución descarga el modelo Whisper elegido y lo guarda en la caché local del motor. Para URL se usa [yt-dlp](https://github.com/yt-dlp/yt-dlp), que descarga audio temporalmente y lo elimina al terminar. Requiere una fuente a la que tengas acceso; VCFR no omite DRM ni controles de acceso.
 - Para órdenes habladas: Vosk y el modelo acústico del idioma seleccionado, descargado aparte; instrucciones abajo.
 - El lector debe exponer MPRIS y metadatos con texto suficiente para reconocer el párrafo. La vista previa muestra cuándo VCFR no logra identificarlo.
 
@@ -65,6 +66,14 @@ cd VCFR
 
 ```bash
 ./vcfr/iniciar.sh
+```
+
+Las dependencias de video son opcionales y se instalan dentro del entorno de VCFR:
+
+```bash
+source .venv/bin/activate
+pip install -e '.[video]'          # Archivos locales
+pip install -e '.[video-online]'   # Archivos locales y URLs públicas
 ```
 
 En `config.json`, define `note_path` a una nota Markdown y las rutas de los modelos de voz en `speech_models`. No compartas ese archivo: puede contener rutas personales y está excluido de Git. En Preferencias eliges idioma, frase de activación, y proveedor local de texto. La escucha permanece apagada al cerrar VCFR.
@@ -115,6 +124,13 @@ El ZIP está construido con `python build_calibre_plugin.py`. Se recomienda prob
 | abre la nota / diagnóstico / ayuda | Abrir destino, comprobar conexiones o mostrar ayuda |
 | responde por escrito / responde con voz / detén tu voz | Preferencias de voz de VCFR |
 | apaga el micrófono | Detener captura de audio |
+| abre notas de video | Abrir el panel de transcripción |
+| transcribe video | Transcribir la fuente indicada en el panel |
+| siguiente fragmento / fragmento anterior | Mover la selección de la transcripción |
+| guarda este fragmento / guarda el fragmento anterior | Añadir cita con marca de tiempo a la nota configurada |
+| muestra la transcripción | Mostrar el texto del fragmento seleccionado |
+
+La ventana **Transcribir video** acepta un archivo de audio/video local o una URL pública compatible con yt-dlp. El modelo procesa audio en el equipo; el modelo elegido puede ocupar espacio en disco y la primera ejecución necesita descargarlo. En enlaces web, yt-dlp obtiene audio en una carpeta temporal que se elimina al finalizar. VCFR escribe el título, texto, tiempos y una referencia limpia en la misma nota configurada en `config.json`; en YouTube la referencia abre el video en ese momento. Las órdenes de transcripción y captura usan un catálogo cerrado y no necesitan un modelo de IA conversacional. La selección en pantalla sigue disponible si no activas el micrófono.
 
 ## Privacidad y seguridad
 
@@ -135,18 +151,19 @@ El video de demostración (`demo/VCFR-Demo.mp4`) usa escenas gráficas originale
 - [LM Studio](https://github.com/lmstudio-ai) y [Ollama](https://github.com/ollama/ollama) son servidores locales opcionales compatibles con el formato de API utilizado; VCFR no incluye ni redistribuye sus binarios o modelos.
 - [Project Gutenberg](https://github.com/gutenberg) aporta el texto de dominio público usado en la demo reproducible; el EPUB conserva sus avisos y condiciones propios.
 
-Los proyectos de transcripción del roadmap, [whisper.cpp](https://github.com/ggml-org/whisper.cpp) y [faster-whisper](https://github.com/SYSTRAN/faster-whisper), se enlazan como posibles opciones para evaluar; no se integraron ni se copió su código en esta versión.
+- [faster-whisper](https://github.com/SYSTRAN/faster-whisper) es el motor opcional de transcripción local y [yt-dlp](https://github.com/yt-dlp/yt-dlp) es el descargador opcional para URLs. Se instalan como dependencias; VCFR no copia ni redistribuye su código fuente.
 
 Los créditos no implican que los proyectos mencionados patrocinen o respalden VCFR. Revisa sus avisos de licencia al redistribuir componentes o recursos de terceros.
 
 ## Desarrollo
 
 ```bash
+python3 -m unittest vcfr.test_app vcfr.test_video_notes
 python3 -m compileall -q vcfr vcfr_calibre
 python build_calibre_plugin.py
 ```
 
-Las pruebas automatizadas están en `vcfr/test_app.py`. La interfaz de Calibre requiere el entorno Python embebido de Calibre para su verificación real.
+Las pruebas automatizadas están en `vcfr/test_app.py` y `vcfr/test_video_notes.py`. La interfaz de Calibre requiere el entorno Python embebido de Calibre para su verificación real. Las dependencias opcionales de transcripción no se necesitan para ejecutar la suite.
 
 ## Licencia
 
