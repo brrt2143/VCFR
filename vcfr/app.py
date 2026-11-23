@@ -47,6 +47,7 @@ if len(CHAPTERS) != len(PARAS):
 from urllib.parse import urlparse
 
 from .commands import COMMANDS, LANGUAGE_NAMES, parse_command, voice_phrases
+from .video_notes import TranscriptWorkspace, VideoNotesError
 
 LANGUAGE = CONFIG.get("speech_language", "es")
 if LANGUAGE not in LANGUAGE_NAMES:
@@ -185,6 +186,7 @@ def save_note(text, chapter=None):
         (backups / (stamp + ".md")).write_text(original)
         if NOTE.read_text() != original:
             raise RuntimeError("La nota cambió. Reintenta para conservar los cambios.")
+        chapter = chapter or CHAPTER
         block = (
             "\n"
             + marker
@@ -230,6 +232,8 @@ class App:
         self.wake_phrase = WAKE_PHRASE
         self.assistant_provider = ASSISTANT_PROVIDER
         self.voz = False
+        self.video_workspace = TranscriptWorkspace()
+        self.video_window = None
         self.root.configure(bg="#0b1220")
         style = ttk.Style()
         style.theme_use("clam")
@@ -363,6 +367,10 @@ class App:
         ttk.Button(helpers, text="Detener voz", command=self.stop_voice).pack(
             side="left", padx=3
         )
+        ttk.Button(
+            helpers, text="Transcribir video", style="Accent.TButton",
+            command=self.open_video_notes,
+        ).pack(side="left", padx=3)
         self.log = scrolledtext.ScrolledText(
             box, height=15, bg="#1f2937", fg="#e5e7eb", wrap="word", font=("Sans", 11)
         )
@@ -523,6 +531,9 @@ class App:
         self.submit(self.entry.get())
         self.entry.delete(0, "end")
 
+    def open_video_notes(self):
+        self.q.put(("open_video_notes", None))
+
     def poll(self):
         while not self.stop.wait(1):
             try:
@@ -586,7 +597,41 @@ class App:
                 self.tasks.task_done()
 
     def execute(self, text, idx, prev, sentence):
-        command = parse_command(text, self.language)
+        command = parse_command(text, getattr(self, "language", LANGUAGE))
+        video_commands = {
+            "transcribe_video", "save_video_segment", "save_previous_video_segment",
+            "next_video_segment", "previous_video_segment", "show_video_segment",
+        }
+        if command == "open_video_notes":
+            self.q.put(("open_video_notes", None))
+            self.q.put(("state", "Panel de transcripción de videos abierto."))
+            return
+        if command in video_commands:
+            if command == "transcribe_video":
+                self.video_workspace.start()
+                self.q.put(("state", "Transcribiendo localmente; el audio no se sube a un modelo en la nube."))
+                return
+            current = self.video_workspace.current()
+            if command in ("save_video_segment", "save_previous_video_segment"):
+                saved = (
+                    self.video_workspace.save_previous(NOTE, NOTE.parent / "backups")
+                    if command == "save_previous_video_segment"
+                    else self.video_workspace.save_current(NOTE, NOTE.parent / "backups")
+                )
+                self.q.put(("state", "Fragmento guardado en " + str(NOTE) if saved else "Ese fragmento ya estaba guardado."))
+                self.q.put(("video_refresh", None))
+                return
+            if command in ("next_video_segment", "previous_video_segment"):
+                segment = self.video_workspace.move(1 if command == "next_video_segment" else -1)
+                self.q.put(("video_select", segment))
+                self.q.put(("state", "Fragmento seleccionado · " + f"{segment.start:.1f}s"))
+                return
+            if command == "show_video_segment":
+                if current is None:
+                    raise VideoNotesError("Primero transcribe un video.")
+                self.q.put(("log", f"Fragmento {current.start:.1f}–{current.end:.1f}s: {current.text}"))
+                self.q.put(("video_select", current))
+                return
         # Captures do not touch the player or speak: the book keeps its exact state.
         if command in ("save", "save_previous", "save_pause"):
             target = prev if command == "save_previous" else idx
@@ -899,6 +944,17 @@ class App:
                     self.listenbutton.configure(text="Activar escucha local")
                     self.state.set("Micrófono apagado.")
                     self.level["value"] = 0
+                elif kind == "open_video_notes":
+                    from .video_ui import VideoNotesWindow
+                    if self.video_window is None or not self.video_window.exists():
+                        self.video_window = VideoNotesWindow(self, self.video_workspace, NOTE)
+                    else:
+                        self.video_window.show()
+                elif kind in ("video_refresh", "video_select") and self.video_window and self.video_window.exists():
+                    if kind == "video_refresh":
+                        self.video_window.refresh()
+                    else:
+                        self.video_window.select_segment(value)
         except queue.Empty:
             pass
         if not self.stop.is_set():

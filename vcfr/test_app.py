@@ -14,7 +14,11 @@ class Tests(unittest.TestCase):
             base = pathlib.Path(d)
             note = base / "note.md"
             note.write_text("Texto original\n")
-            with patch.object(vcfr_module, "BASE", base), patch.object(vcfr_module, "NOTE", note):
+            with (
+                patch.object(vcfr_module, "BASE", base),
+                patch.object(vcfr_module, "PROJECT", base),
+                patch.object(vcfr_module, "NOTE", note),
+            ):
                 vcfr_module.save_note(vcfr_module.PARAS[1])
                 first = note.read_text()
                 vcfr_module.save_note(vcfr_module.PARAS[1])
